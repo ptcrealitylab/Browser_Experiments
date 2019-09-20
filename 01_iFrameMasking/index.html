@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iFrame Masking Example</title>
+    <script>
+        function getDataUriFromImage(url, callback) {
+            let image = new Image();
+            image.src = url;
+            image.onload = function () {
+                let canvas = document.createElement('canvas');
+                canvas.width = image.width;
+                canvas.height = image.height;
+                canvas.getContext('2d').drawImage(this, 0, 0);
+                callback(canvas.toDataURL('image/png'));
+            };
+        }
+
+        getDataUriFromImage('mask.png', function (dataUri) {
+           document.getElementById("layer2").style.webkitMaskImage = "url("+dataUri+")";
+        });
+    </script>
+</head>
+<body style="margin: 0; padding: 0">
+
+<iframe id="layer1" src="layer1.html"
+        style="width: 1334px; height: 750px; position: absolute; left: 0; top: 0; border-width: 0"></iframe>
+<iframe id="layer2" src="layer2.html"
+        style="width: 1334px; height: 750px; position: absolute; left: 0; top: 0; border-width: 0"></iframe>
+</body>
+</html>

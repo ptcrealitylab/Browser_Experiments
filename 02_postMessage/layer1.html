@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>layer1</title>
+</head>
+<body style="margin: 0; padding: 0">
+<img src="space.jpg" style="width: 1334px; height: 750px" alt="">
+
+<script>
+
+
+    let imgURI = null;
+
+    function getDataUriFromImage(url, callback) {
+        let image = new Image();
+        image.src = url;
+        image.onload = function () {
+            let canvas = document.createElement('canvas');
+            canvas.width = image.width;
+            canvas.height = image.height;
+            canvas.getContext('2d').drawImage(this, 0, 0);
+            callback(canvas.toDataURL('image/png'));
+        };
+    }
+
+    getDataUriFromImage('mask.png', function (dataUri) {
+        imgURI = dataUri;
+        parent.postMessage({ready:true},"*");
+    });
+
+
+    window.onmessage = function(e){
+
+        if(e.data.sentMask) {
+            parent.postMessage({mask:imgURI},"*");
+        }
+    }
+
+</script>
+</body>
+</html>

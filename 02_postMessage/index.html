@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iFrame Masking Example</title>
+    <script>
+        let timeStart = 0;
+
+
+        window.onmessage = function(e){
+            if(e.data.ready) {
+                timeStart = Date.now();
+                e.source.postMessage({sentMask:true},"*");
+            }
+            if(e.data.mask) {
+                let timeRecive = Date.now();
+                document.getElementById("layer2").style.webkitMaskImage = "url("+e.data.mask+")";
+               let timeMask = Date.now();
+
+               document.getElementById("timeURI").innerText =  timeRecive - timeStart;
+                document.getElementById("timeMask").innerText =  timeMask - timeRecive;
+                timeStart = Date.now();
+                e.source.postMessage({sentMask:true},"*");
+            }
+        }
+
+    </script>
+</head>
+<body style="margin: 0; padding: 0">
+
+<iframe id="layer1" src="layer1.html"
+        style="width: 1334px; height: 750px; position: absolute; left: 0; top: 0; border-width: 0"></iframe>
+<iframe id="layer2" src="layer2.html"
+        style="width: 1334px; height: 750px; position: absolute; left: 0; top: 0; border-width: 0"></iframe>
+<div style="position: absolute; top: 760px; left: 10px;  height: 100px">Time to receive png URI from iFrame: <div style="display: inline-block" id="timeURI">-</div> ms
+    <br><br> Time for drawing mask: <div style="display: inline-block" id="timeMask">-</div></div>
+</body>
+</html>
