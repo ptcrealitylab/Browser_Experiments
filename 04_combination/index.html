@@ -90,14 +90,14 @@ function maskStarRemasque() {
   let idM = maskGfx.getImageData(0, 0, width, height);
   for (let i = 0; i < width * height; i++) {
     if (id1.data[i * 4] < id2.data[i * 4]) {
-      idM.data[i * 4 + 0] = 0;
+      idM.data[i * 4 + 0] = 255;
       idM.data[i * 4 + 1] = 255;
-      idM.data[i * 4 + 2] = 0;
+      idM.data[i * 4 + 2] = 255;
       idM.data[i * 4 + 3] = 255;
     } else {
       idM.data[i * 4 + 0] = 0;
       idM.data[i * 4 + 1] = 0;
-      idM.data[i * 4 + 2] = 255;
+      idM.data[i * 4 + 2] = 0;
       idM.data[i * 4 + 3] = 0;
     }
   }
@@ -108,7 +108,7 @@ function maskStarRemasque() {
 layer2.style.webkitMaskImage = 'element(#mask-canvas)';
 layer2.style.maskImage = '-moz-element(#mask-canvas)';
 
-maskCanvas.style.background = 'red';
+maskCanvas.style.background = '#333333';
   </script>
 
 </body>
