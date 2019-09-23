@@ -103,32 +103,21 @@ function maskStarRemasque() {
   let id3 = layer3.gfx.getImageData(0, 0, width, height);
   let idM2 = layer2.maskGfx.getImageData(0, 0, width, height);
   let idM3 = layer3.maskGfx.getImageData(0, 0, width, height);
+
   for (let i = 0; i < width * height; i++) {
     const id1i = id1.data[i * 4];
     const id2i = id2.data[i * 4];
     const id3i = id3.data[i * 4];
 
-    if (id2i > id1i && id2i > id3i) {
-      idM2.data[i * 4 + 0] = 255;
-      idM2.data[i * 4 + 1] = 255;
-      idM2.data[i * 4 + 2] = 255;
+    if (id2i > id1i) {
       idM2.data[i * 4 + 3] = 255;
     } else {
-      idM2.data[i * 4 + 0] = 0;
-      idM2.data[i * 4 + 1] = 0;
-      idM2.data[i * 4 + 2] = 0;
       idM2.data[i * 4 + 3] = 0;
     }
 
     if (id3i > id1i && id3i > id2i) {
-      idM3.data[i * 4 + 0] = 255;
-      idM3.data[i * 4 + 1] = 255;
-      idM3.data[i * 4 + 2] = 255;
       idM3.data[i * 4 + 3] = 255;
     } else {
-      idM3.data[i * 4 + 0] = 0;
-      idM3.data[i * 4 + 1] = 0;
-      idM3.data[i * 4 + 2] = 0;
       idM3.data[i * 4 + 3] = 0;
     }
   }
