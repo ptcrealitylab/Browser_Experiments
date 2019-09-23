@@ -3,8 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
+<style>
+iframe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-width: 0;
+  overflow: hidden;
+}
+
+#layer1 {
+  position: relative;
+}
+</style>
 </head>
-<body>
+<body style="margin: 0; padding: 0">
+  <iframe id="layer1" src="layer1.html" seamless="seamless"></iframe>
+  <iframe id="layer2" src="layer2.html" seamless="seamless"></iframe>
+
+  <script>
+
+const width = 320 * 2;
+const height = 180 * 2;
+
+const layer1 = document.getElementById('layer1');
+const layer2 = document.getElementById('layer2');
+layer1.style.width = layer2.style.width = `${width}px`;
+layer1.style.height = layer2.style.height = `${height}px`;
+const layer1Canvas = document.createElement('canvas');
+const layer2Canvas = document.createElement('canvas');
+const maskCanvas = document.createElement('canvas');
+maskCanvas.id = 'mask-canvas';
+
+const layer1Gfx = layer1Canvas.getContext('2d');
+const layer2Gfx = layer2Canvas.getContext('2d');
+const maskGfx = maskCanvas.getContext('2d');
+
+layer1Canvas.width = layer2Canvas.width = maskCanvas.width = width;
+layer1Canvas.height = layer2Canvas.height = maskCanvas.height = height;
+
+document.body.appendChild(layer1Canvas);
+document.body.appendChild(layer2Canvas);
+document.body.appendChild(maskCanvas);
+
+function drawDataURI(dataURI, context) {
+  return new Promise(function(resolve, reject) {
+    let image = new Image();
+    image.src = dataURI;
+    image.onload = function() {
+      context.drawImage(this, 0, 0);
+      resolve();
+    };
+    image.onerror  = function(e) {
+      reject(e);
+    };
+  });
+}
+
+let layer1New = false;
+let layer2New = false;
+
+window.addEventListener('message', async function(e) {
+  if (e.data.id === 1) {
+    await drawDataURI(e.data.mask, layer1Gfx)
+    layer1New = true;
+  } else if (e.data.id === 2) {
+    await drawDataURI(e.data.mask, layer2Gfx);
+    layer2New = true;
+  }
+
+});
+
+window.requestAnimationFrame(function murderPerformance() {
+  if (layer1New && layer2New) {
+    maskStarRemasque();
+    layer1New = false;
+    layer2New = false;
+  }
+  window.requestAnimationFrame(murderPerformance);
+});
+
+function maskStarRemasque() {
+  let id1 = layer1Gfx.getImageData(0, 0, width, height);
+  let id2 = layer2Gfx.getImageData(0, 0, width, height);
+  let idM = maskGfx.getImageData(0, 0, width, height);
+  for (let i = 0; i < width * height; i++) {
+    if (id1.data[i * 4] < id2.data[i * 4]) {
+      idM.data[i * 4 + 0] = 0;
+      idM.data[i * 4 + 1] = 255;
+      idM.data[i * 4 + 2] = 0;
+      idM.data[i * 4 + 3] = 255;
+    } else {
+      idM.data[i * 4 + 0] = 0;
+      idM.data[i * 4 + 1] = 0;
+      idM.data[i * 4 + 2] = 255;
+      idM.data[i * 4 + 3] = 0;
+    }
+  }
+  maskGfx.putImageData(idM, 0, 0);
+  // layer2.style.webkitMaskImage = `url(${maskCanvas.toDataURL('image/png')})`;
+}
+
+layer2.style.webkitMaskImage = 'element(#mask-canvas)';
+layer2.style.maskImage = '-moz-element(#mask-canvas)';
+
+maskCanvas.style.background = 'red';
+  </script>
 
 </body>
 </html>
