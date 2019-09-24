@@ -67,6 +67,7 @@ function drawDataURI(dataURI, layer) {
     let image = new Image();
     image.src = dataURI;
     image.onload = function() {
+      context.clearRect(0, 0, width, height);
       context.drawImage(this, 0, 0);
       layer.updated = true;
       resolve();
@@ -112,13 +113,21 @@ function maskStarRemasque() {
     if (id2i > id1i) {
       idM2.data[i * 4 + 3] = 255;
     } else {
-      idM2.data[i * 4 + 3] = 0;
+      idM2.data[i * 4 + 3] = 255 - id1.data[i * 4 + 3];
     }
 
     if (id3i > id1i && id3i > id2i) {
       idM3.data[i * 4 + 3] = 255;
     } else {
-      idM3.data[i * 4 + 3] = 0;
+      // Blend based on alpha of all layers that are "in front" of this one
+      let alpha = id3.data[i * 4 + 3] / 255;
+      if (id3i < id1i) {
+        alpha *= (255 - id1.data[i * 4 + 3]) / 255;
+      }
+      if (id3i < id2i) {
+        alpha *= (255 - id2.data[i * 4 + 3]) / 255;
+      }
+      idM3.data[i * 4 + 3] = Math.floor(alpha * 255);
     }
   }
   layer2.maskGfx.putImageData(idM2, 0, 0);

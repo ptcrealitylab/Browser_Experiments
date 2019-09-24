@@ -1,4 +1,32 @@
-function run(color, xDiff, id) {
+const postVertShader = `
+varying vec2 vUv;
+void main() {
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}`;
+
+const postFragShader = `
+#include <packing>
+varying vec2 vUv;
+uniform sampler2D tDepth;
+uniform sampler2D tDiffuse;
+uniform float cameraNear;
+uniform float cameraFar;
+float readDepth(sampler2D depthSampler, vec2 coord) {
+  float fragCoordZ = texture2D(depthSampler, coord).x;
+  float viewZ = perspectiveDepthToViewZ(fragCoordZ, cameraNear, cameraFar);
+  return viewZToOrthographicDepth(viewZ, cameraNear, cameraFar);
+}
+void main() {
+  float alphy = texture2D(tDiffuse, vUv).a;
+  float depth = readDepth(tDepth, vUv);
+  gl_FragColor.rgb = 1.0 - vec3(depth);
+  gl_FragColor.a = alphy;
+}`;
+
+
+
+function run(color, opacity, xDiff, id) {
   const width = 320 * 2;
   const height = 180 * 2;
 
@@ -7,6 +35,7 @@ function run(color, xDiff, id) {
   var camera = new THREE.PerspectiveCamera(75, width/height, 10, 100);
 
   var renderer = new THREE.WebGLRenderer({alpha: true});
+  console.log('cc', renderer.getClearColor(), renderer.getClearAlpha());
   renderer.setSize(width, height);
   document.body.appendChild(renderer.domElement);
 
@@ -19,7 +48,7 @@ function run(color, xDiff, id) {
 
   // var geometry = new THREE.BoxGeometry(1, 1, 1);
   var geometry = new THREE.TorusKnotBufferGeometry( 10, 3, 100, 16 );
-  var material = new THREE.MeshLambertMaterial({color: color});
+  var material = new THREE.MeshLambertMaterial({color: color, opacity: opacity});
   var cube = new THREE.Mesh(geometry, material);
   cube.position.x += xDiff;
   scene.add(cube);
@@ -69,7 +98,7 @@ function run(color, xDiff, id) {
   const coolerTarget = new THREE.WebGLRenderTarget(width, height);
   // Rendering depth from THREE's depth texture example
   const target = new THREE.WebGLRenderTarget(width, height);
-  target.texture.format = THREE.RGBFormat;
+  target.texture.format = THREE.RGBAFormat;
   target.texture.minFilter = THREE.NearestFilter;
   target.texture.magFilter = THREE.NearestFilter;
   target.texture.generateMipmaps = false;
@@ -83,13 +112,14 @@ function run(color, xDiff, id) {
     // Setup post processing stage
     postCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
     var postMaterial = new THREE.ShaderMaterial({
-      vertexShader: document.querySelector('#post-vert').textContent.trim(),
-      fragmentShader: document.querySelector('#post-frag').textContent.trim(),
+      vertexShader: postVertShader,
+      fragmentShader: postFragShader,
       uniforms: {
         cameraNear: {value: camera.near},
         cameraFar: {value: camera.far},
-        tDepth: {value: target.depthTexture}
-      }
+        tDepth: {value: target.depthTexture},
+        tDiffuse: {value: target.texture},
+      },
     });
     var postPlane = new THREE.PlaneBufferGeometry(2, 2);
     var postQuad = new THREE.Mesh(postPlane, postMaterial);

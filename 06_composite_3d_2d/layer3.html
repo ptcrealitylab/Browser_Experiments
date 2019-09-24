@@ -51,12 +51,8 @@ var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(75, width/height, 10, 100);
 camera.position.z = 35;
 
-var renderer = new THREE.WebGLRenderer();
+var renderer = new THREE.WebGLRenderer({alpha: true});
 renderer.setSize(width, height);
-// document.body.appendChild(renderer.domElement);
-renderer.domElement.style.position = 'absolute';
-renderer.domElement.style.top = '0';
-renderer.domElement.style.left = '0';
 
 var geometry = new THREE.PlaneGeometry(320 / 10, 240 / 10);
 var material = new THREE.MeshBasicMaterial({color: 0xffa400, side: THREE.DoubleSide});
@@ -133,6 +129,7 @@ function readDepthData() {
       pix[(height - 1 - y) * width + x] = t;
     }
   }
+  coolGfx.clearRect(0, 0, width, height);
   coolGfx.putImageData(new ImageData(new Uint8ClampedArray(buf), width, height), 0, 0);
   let url = cvs.toDataURL('image/png');
   if (parent) {
