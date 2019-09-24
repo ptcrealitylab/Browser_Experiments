@@ -54,7 +54,9 @@ camera.position.z = 35;
 var renderer = new THREE.WebGLRenderer({alpha: true});
 renderer.setSize(width, height);
 
-var geometry = new THREE.PlaneGeometry(320 / 10, 240 / 10);
+const contentWidth = 290;
+const contentHeight = 300;
+var geometry = new THREE.PlaneGeometry(contentWidth / 10, contentHeight / 10);
 var material = new THREE.MeshBasicMaterial({color: 0xffa400, side: THREE.DoubleSide});
 var cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
@@ -82,17 +84,22 @@ cssRenderer.domElement.style.top = '0';
 const cssScene = new THREE.Scene();
 
 const testDiv = document.createElement('div');
-testDiv.style.width = '320px';
-testDiv.style.height = '240px';
-testDiv.style.background = 'linear-gradient(45deg, rgba(40, 40, 40, 0.3), rgba(40, 40, 40, 1))';
+testDiv.style.width = `${contentWidth}px`;
+testDiv.style.height = `${contentHeight}px`;
 
-const iframe = document.createElement('iframe');
-iframe.style.width = '320px';
-iframe.style.height = '240px';
-iframe.style.border = '0';
-iframe.src = 'https://www.youtube.com/embed/J---aiyznGQ?rel=0';
+const img = document.createElement('img');
+img.width = contentWidth;
+img.height = contentHeight;
+img.src = 'boston.png';
+testDiv.appendChild(img);
+
+// const iframe = document.createElement('iframe');
+// iframe.style.width = '320px';
+// iframe.style.height = '240px';
+// iframe.style.border = '0';
+// iframe.src = 'https://www.youtube.com/embed/J---aiyznGQ?rel=0';
 // iframe.style.transform = 'scale(0.1)';
-testDiv.appendChild(iframe);
+// testDiv.appendChild(iframe);
 
 const cssObj = new THREE.CSS3DObject(testDiv);
 
