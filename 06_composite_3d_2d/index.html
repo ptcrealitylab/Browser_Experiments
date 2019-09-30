@@ -142,6 +142,19 @@ function maskStarRemasque() {
 // layer2.style.webkitMaskImage = 'element(#mask-canvas)';
 layer2.elt.style.maskImage = '-moz-element(#mask-layer2)';
 layer3.elt.style.maskImage = '-moz-element(#mask-layer3)';
+
+let apart = false;
+document.addEventListener('keypress', function(event) {
+  console.log(event);
+  apart = !apart;
+  if (apart) {
+    layer2.elt.contentWindow.postMessage({state: 'apart'});
+    layer1.elt.contentWindow.postMessage({state: 'apart'});
+  } else {
+    layer2.elt.contentWindow.postMessage({state: 'together'});
+    layer1.elt.contentWindow.postMessage({state: 'together'});
+  }
+});
   </script>
 
 </body>

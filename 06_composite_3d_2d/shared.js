@@ -50,7 +50,8 @@ function run(color, opacity, xDiff, id) {
   var geometry = new THREE.TorusKnotBufferGeometry( 10, 3, 100, 16 );
   var material = new THREE.MeshLambertMaterial({color: color, opacity: opacity});
   var cube = new THREE.Mesh(geometry, material);
-  cube.position.x += xDiff;
+  var cubeTargetX = xDiff;
+  cube.position.x = cubeTargetX;
   scene.add(cube);
 
   camera.position.z = 35;
@@ -63,6 +64,13 @@ function run(color, opacity, xDiff, id) {
   const coolGfx = cvs.getContext('2d');
 
   window.requestAnimationFrame(function animate() {
+    if (Math.abs(cube.position.x - cubeTargetX) > 0.2) {
+      if (cube.position.x < cubeTargetX) {
+        cube.position.x += 0.2;
+      } else {
+        cube.position.x -= 0.2;
+      }
+    }
     cube.rotation.x += 0.01 * xDiff / 3;
     cube.rotation.y += 0.01 * xDiff / 3;
     renderer.setRenderTarget(target);
@@ -126,4 +134,12 @@ function run(color, opacity, xDiff, id) {
     postScene = new THREE.Scene();
     postScene.add(postQuad);
   }
+
+  window.addEventListener('message', function(e) {
+    if (e.data.state === 'apart') {
+      cubeTargetX = 5 * xDiff;
+    } else if (e.data.state === 'together') {
+      cubeTargetX = xDiff;
+    }
+  });
 }
