@@ -54,8 +54,8 @@ camera.position.z = 35;
 var renderer = new THREE.WebGLRenderer({alpha: true});
 renderer.setSize(width, height);
 
-const contentWidth = 290;
-const contentHeight = 300;
+const contentWidth = 260 * 1.2;
+const contentHeight = 300 * 1.2;
 var geometry = new THREE.PlaneGeometry(contentWidth / 10, contentHeight / 10);
 var material = new THREE.MeshBasicMaterial({color: 0xffa400, side: THREE.DoubleSide});
 var cube = new THREE.Mesh(geometry, material);
@@ -90,7 +90,7 @@ testDiv.style.height = `${contentHeight}px`;
 const img = document.createElement('img');
 img.width = contentWidth;
 img.height = contentHeight;
-img.src = 'boston.png';
+img.src = 'logo.png';
 testDiv.appendChild(img);
 
 // const iframe = document.createElement('iframe');
