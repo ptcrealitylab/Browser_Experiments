@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+<style>
+body {
+  background: url(dot.png);
+}
+
+iframe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-width: 0;
+  overflow: hidden;
+}
+
+#layer1 {
+  position: relative;
+}
+
+.borders {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.hidden {
+  display: none;
+}
+</style>
+</head>
+<body style="margin: 0; padding: 0">
+  <iframe id="layer1" src="layer1.html"></iframe>
+  <iframe id="layer2" src="layer2.html"></iframe>
+  <iframe id="layer3" src="layer3.html"></iframe>
+
+  <script src="borders.js"></script>
+  <script src="main.js"></script>
+  </script>
+
+</body>
+</html>
